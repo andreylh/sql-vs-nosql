@@ -3,16 +3,14 @@ package com.andreylh.sqlvsnosql;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import com.andreylh.sqlvsnosql.trajectory.Trajectory;
+import com.andreylh.sqlvsnosql.insertapi.InsertApi;
+import com.andreylh.sqlvsnosql.insertapi.InsertApiFactory;
 
-/**
- * Hello world!
- *
- */
 public class App {
 	public static void main(String[] args) throws IOException {
+		InsertApi insert = InsertApiFactory.createInsertApi();
 		
-		Trajectory.createTrajectoriesFromFiles(Paths.get("D:/Andrey/Research/Database"));	
+		insert.execute(Paths.get("C:/arqDocs/Estudo/Database"));		
 	}
 }
 
