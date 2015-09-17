@@ -22,6 +22,8 @@ class TrajectoriesManager {
 		List<Trajectory> trajectories = new ArrayList<>();
 
 		lines.forEach(l -> trajectories.add(lineToTrajectory(l)));
+		
+		
 	}
 
 	private static Trajectory lineToTrajectory(String text) {
