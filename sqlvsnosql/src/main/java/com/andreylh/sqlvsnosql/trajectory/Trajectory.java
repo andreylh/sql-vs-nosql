@@ -1,8 +1,10 @@
-package com.andreylh.sqlvsnosql.insertapi;
+package com.andreylh.sqlvsnosql.trajectory;
 
 import java.time.LocalDateTime;
 
-class Trajectory {
+import org.bson.Document;
+
+public class Trajectory {
 	private long id;
 	private LocalDateTime dateTime;
 	private double longitude;
@@ -38,5 +40,15 @@ class Trajectory {
 
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
+	}
+	
+	public Document getDocument() {
+		Document doc = new Document();
+		doc.append("id", id);
+		doc.append("datetime", dateTime.toString());
+		doc.append("longitude", longitude);
+		doc.append("latitude", latitude);
+		
+		return doc;
 	}
 }

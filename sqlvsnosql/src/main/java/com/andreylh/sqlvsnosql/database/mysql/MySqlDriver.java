@@ -1,98 +1,52 @@
 package com.andreylh.sqlvsnosql.database.mysql;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+
+import com.andreylh.sqlvsnosql.database.DatabaseDriver;
 
 public class MySqlDriver implements DatabaseDriver<Connection> {
 	private static final String JDBC_CONNECTION_STRING = "jdbc:mysql://%s:%s/%s";
 	private static final String MYSQL_CLASS = "com.mysql.jdbc.Driver";
-
-	private String serverName = "";
-	private int portNumber;
-	private String databaseName = "";
-	private String userName = "";
-	private String password = "";
-	private Connection conn;	
-
-	@Override
-	public String getServerName() throws Exception {
-		if (serverName.equals("")) {
-			throw new Exception("serverName's required");
-		}
-		return serverName;
-	}
+	private static MySqlDriver instance;
+	
+	private final String serverName = "localhost";
+	private final int portNumber = 3306;
+	private final String databaseName = "trajectory";
+	private final String userName = "andrey";
+	private final String password = "123456";
+	
+	private BasicDataSource ds;
 
 	@Override
-	public void setServerName(String serverName) {
-		this.serverName = serverName;
-	}
-
-	@Override
-	public int getPortNumber() throws Exception {
-		if (portNumber == 0) {
-			throw new Exception("portNumber's required");
-		}
-		return portNumber;
-	}
-
-	@Override
-	public void setPortNumber(int portNumber) {
-		this.portNumber = portNumber;
-	}
-
-	@Override
-	public String getDatabaseName() throws Exception {
-		if (databaseName.equals("")) {
-			throw new Exception("databaseName's required");
-		}
-		return databaseName;
-	}
-
-	@Override
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
-	}
-
-	@Override
-	public String getUserName() {
-		return userName;
-	}
-
-	@Override
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
-	@Override
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	@Override
-	public Connection getConnection() {
-		if (conn == null) {
+	public Connection getConnection() throws SQLException {
+		if (ds == null) {
 			connect();
 		}		
-		return conn;
+		return ds.getConnection();
 	}
 
 	private void connect() {
 		try {
-			Class.forName(MYSQL_CLASS);
-			conn = DriverManager.getConnection(
-					String.format(JDBC_CONNECTION_STRING, 
-							getServerName(),
-							getPortNumber(),
-							getDatabaseName()),
-					getUserName(),
-					getPassword());			
+			ds = new BasicDataSource();
+			ds.setDriverClassName(MYSQL_CLASS);
+			ds.setUsername(userName);
+			ds.setPassword(password);
+			ds.setUrl(String.format(JDBC_CONNECTION_STRING, 
+					serverName,
+					portNumber,
+					databaseName));			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static MySqlDriver getInstance() {
+		if (instance == null) {
+			instance = new MySqlDriver();
+		}
+		return instance;
 	}
 }
