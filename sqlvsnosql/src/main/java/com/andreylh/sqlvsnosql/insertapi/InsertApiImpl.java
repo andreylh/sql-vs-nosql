@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.andreylh.sqlvsnosql.database.DbKind;
 import com.andreylh.sqlvsnosql.log.Log;
@@ -19,7 +17,7 @@ class InsertApiImpl implements InsertApi {
 
 	private DbKind dbKind;
 	private TrajectoryDao trajectoryDao;
-	private static AtomicLong totalInsertTime = new AtomicLong(0);
+	private static long totalInsertTime = 0;
 
 	@Override
 	public void execute(Path filesPath) throws IOException {
@@ -48,6 +46,7 @@ class InsertApiImpl implements InsertApi {
 			.map(SystemFileHelper::readAllLines)
 			.map(this::linesToList)
 			.forEach(this::insert);
+		Log.log("Total Time (s): %d", totalInsertTime / 1000);
 	}
 
 	private List<Trajectory> linesToList(List<String> lines) {
@@ -66,8 +65,8 @@ class InsertApiImpl implements InsertApi {
 			trajectory.setId(Long.parseLong(stringValues[0]));
 			trajectory.setDateTime(
 					LocalDateTime.parse(stringValues[1], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-			trajectory.setLongitude(Double.parseDouble(stringValues[0]));
-			trajectory.setLatitude(Double.parseDouble(stringValues[0]));
+			trajectory.setLongitude(Double.parseDouble(stringValues[2]));
+			trajectory.setLatitude(Double.parseDouble(stringValues[3]));
 			return trajectory;
 		}
 
@@ -76,7 +75,7 @@ class InsertApiImpl implements InsertApi {
 
 	private void insert(List<Trajectory> trajectories) {
 		try {
-			totalInsertTime.accumulateAndGet(geTrajectoryDao().insertMany(trajectories), Long::sum);			
+			totalInsertTime += geTrajectoryDao().insertManyAndGetTime(trajectories);			
 		} catch (Exception e){
 			e.printStackTrace();
 		}

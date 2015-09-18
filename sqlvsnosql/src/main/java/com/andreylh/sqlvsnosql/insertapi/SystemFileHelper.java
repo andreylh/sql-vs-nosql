@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.andreylh.sqlvsnosql.log.Log;
+
 class SystemFileHelper {
 	
 	public static List<Path> loadTextPaths(Path path) throws IOException {
@@ -22,6 +24,7 @@ class SystemFileHelper {
 
 	public static List<String> readAllLines(Path path) {
 		try {
+			Log.log("Reading %s", path.toString());
 			return Files.readAllLines(path);
 		} catch (IOException e) {
 			e.printStackTrace();
