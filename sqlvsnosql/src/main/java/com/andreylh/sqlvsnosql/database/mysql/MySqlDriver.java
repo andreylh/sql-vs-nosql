@@ -8,8 +8,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import com.andreylh.sqlvsnosql.database.DatabaseDriver;
 
 public class MySqlDriver implements DatabaseDriver<Connection> {
-	//private static final String JDBC_CONNECTION_STRING = "jdbc:mysql://%s:%s/%s?useServerPrepStmts=false&rewriteBatchedStatements=true";
-	private static final String JDBC_CONNECTION_STRING = "jdbc:mysql://%s:%s/%s";
+	private static final String JDBC_CONNECTION_STRING = "jdbc:mysql://%s:%s/%s?useServerPrepStmts=false&rewriteBatchedStatements=true";	
 	private static final String MYSQL_CLASS = "com.mysql.jdbc.Driver";
 	private static MySqlDriver instance;
 	

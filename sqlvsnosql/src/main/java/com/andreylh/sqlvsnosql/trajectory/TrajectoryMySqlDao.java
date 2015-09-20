@@ -7,6 +7,7 @@ import com.andreylh.sqlvsnosql.log.Log;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -17,7 +18,10 @@ class TrajectoryMySqlDao implements TrajectoryDao {
 		long startTime = 0;
 		long endTime = 0;
 		long totalTime = 0;
-		try {
+		try {			
+			Log.log("Executing insert of %d", trajectories.size());
+			startTime = System.currentTimeMillis();
+			
 			String sql = "insert into trajectory (id, datetime, longitude, latitude) values (?, ?, ?, ?)";
 			Connection connection = MySqlDriver.getInstance().getConnection();
 			PreparedStatement insert = connection.prepareStatement(sql);
@@ -30,9 +34,6 @@ class TrajectoryMySqlDao implements TrajectoryDao {
 					insert.setDouble(4, trajectory.getLatitude());
 					insert.addBatch();
 				}
-
-				Log.log("Executing insert of %d", trajectories.size());
-				startTime = System.currentTimeMillis();
 				insert.executeBatch();
 				endTime = System.currentTimeMillis();
 				totalTime = endTime - startTime;
@@ -60,7 +61,12 @@ class TrajectoryMySqlDao implements TrajectoryDao {
 			query.setDouble(2, latitude);
 			Log.log("Executing query");
 			startTime = System.currentTimeMillis();
-			query.executeQuery();
+			ResultSet rs = query.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println(String.format("id: %d, datetime: %s, longitude: %f, latitude: %f", rs.getLong("id"), rs.getTimestamp("datetime").toLocalDateTime().toString(), rs.getDouble("longitude"), rs.getDouble("latitude")));
+			}
+			
 			endTime = System.currentTimeMillis();
 			totalTime = endTime - startTime;
 		} catch (SQLException e) {

@@ -12,20 +12,18 @@ public class MongoDbDriver implements DatabaseDriver<MongoDatabase> {
 	private final int portNumber = 27017;
 	private final String databaseName = "trajectory";
 	
-	private MongoDatabase conn;
+	private MongoClient client;
 
 	@Override
 	public MongoDatabase getConnection() throws Exception {
-		if (conn == null) {
+		if (client == null) {
 			connect();
 		}
-		return conn;
+		return client.getDatabase(databaseName);
 	}
 	
 	private void connect() throws Exception {		
-		MongoClient client = new MongoClient(serverName, portNumber);
-		
-		conn = client.getDatabase(databaseName);		
+		client = new MongoClient(serverName, portNumber);		
 	}
 	
 	public static MongoDbDriver getInstance() {
